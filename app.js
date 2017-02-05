@@ -1,5 +1,6 @@
 const express = require('express');
 const webpackDevMiddleware = require('webpack-dev-middleware');
+const webpackHotMiddleware = require('webpack-hot-middleware');
 const webpack = require('webpack');
 const webpackConfig = require('./webpack.dev.config');
 const prompt = require('prompt');
@@ -8,9 +9,16 @@ const tcpPortUsed = require('tcp-port-used');
 const app = express();
 const compiler = webpack(webpackConfig);
 
-app.use(webpackDevMiddleware(compiler, {
-  publicPath: 'http://localhost:3000/',
-}));
+const hotMiddleware = [
+  webpackDevMiddleware(compiler, {
+    publicPath: 'http://localhost:3000/',
+    hot: true,
+    stats: {
+      colors: true,
+    },
+  }), webpackHotMiddleware(compiler, {})];
+
+app.use(hotMiddleware);
 
 let port = 3000;
 tcpPortUsed.check(3000, '127.0.0.1')

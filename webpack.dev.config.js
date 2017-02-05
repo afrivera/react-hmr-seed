@@ -1,19 +1,21 @@
+const webpack = require('webpack');
+
 const config = {
   entry: {
-    'bundle.js': ['./src/index.js', 'webpack-hot-middleware/client'],
+    'bundle.js': ['./src/index.jsx', 'webpack-hot-middleware/client'],
   },
   output: {
     path: '/',
     filename: '[name]',
   },
+  resolve: {
+    extensions: ['.js', '.jsx'],
+  },
   module: {
     rules: [{
       test: /\.jsx?$/,
       exclude: /node_modules/,
-      loader: 'babel-loader',
-      query: {
-        presets: ['es2015', 'react'],
-      },
+      loaders: ['react-hot-loader', 'babel-loader?presets[]=es2015,presets[]=react'],
     }, {
       test: /\.html$/,
       exclude: /node_modules/,
@@ -25,6 +27,10 @@ const config = {
     }],
   },
   devtool: 'eval-source-map',
+  plugins: [
+    new webpack.HotModuleReplacementPlugin(),
+    new webpack.NoEmitOnErrorsPlugin(),
+  ],
 };
 
 module.exports = config;
